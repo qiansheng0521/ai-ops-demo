@@ -7,7 +7,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from ai_copy_generator import call_llm
 
-ANALYSIS_DATE = pd.Timestamp("2026-06-30")
+ANALYSIS_DATE = None
 
 
 def sales_kpis(orders):
@@ -29,6 +29,8 @@ def main():
     rfm = pd.read_csv("data/rfm_segments.csv", encoding="utf-8-sig")
     reviews = pd.read_csv("outputs/review_insights.csv", encoding="utf-8-sig")
 
+    global ANALYSIS_DATE
+    ANALYSIS_DATE = orders["order_date"].max()
     kpi = sales_kpis(orders)
     seg_summary = rfm.groupby("segment").agg(用户数=("user_id", "count"), 平均消费=("monetary", "mean")).round(1)
     neg_reviews = reviews[reviews["sentiment"] == "negative"].shape[0]

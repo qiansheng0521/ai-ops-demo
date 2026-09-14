@@ -24,12 +24,12 @@ ORDERS = pd.read_csv("data/orders.csv", encoding="utf-8-sig", parse_dates=["orde
 REVIEWS = pd.read_csv("data/reviews.csv", encoding="utf-8-sig")
 INSIGHTS = pd.read_csv("outputs/review_insights.csv", encoding="utf-8-sig")
 
-ANALYSIS_DATE = pd.Timestamp("2026-06-30")
+ANALYSIS_DATE = ORDERS["order_date"].max()
 LAST30 = ORDERS[ORDERS["order_date"] >= ANALYSIS_DATE - pd.Timedelta(days=30)]
 GMV30 = round(LAST30["amount"].sum(), 1)
 ORDERS30 = len(LAST30)
-AOV = round(GMV30 / ORDERS30, 1)
-NEG_REVIEWS = int((REVIEWS["sentiment"] == "negative").sum())
+AOV = round(GMV30 / ORDERS30, 1) if ORDERS30 else 0
+NEG_REVIEWS = int((INSIGHTS["sentiment"] == "negative").sum())
 TOTAL_GMV = round(ORDERS["amount"].sum(), 1)
 TOTAL_ORDERS = len(ORDERS)
 USERS = len(REVIEWS)  # placeholder never used; users from segment
@@ -84,10 +84,10 @@ story.append(Paragraph("一、项目背景", styles["CNH1"]))
 story.append(HRFlowable(width="100%", thickness=0.7, color=colors.HexColor("#BFDBFE"), spaceAfter=6))
 story.append(Paragraph("当前 O2O/B2C 行业的运营工作，正在从“经验驱动”转向“数据驱动 + AI 提效”。运营同学不仅需要完成拉新、促活、复购、召回等业务动作，还需要快速处理用户数据、批量产出内容、识别用户反馈，并沉淀可复用的自动化流程。", styles["CNBody"]))
 story.append(Spacer(1, 0.15*cm))
-story.append(Paragraph("本项目以“连锁咖啡新零售”为模拟业务场景，围绕岗位 JD 中强调的 SQL/Python 数据分析能力、AI 工具使用意愿，以及 LangChain/Dify 等 Agent 框架认知，设计并完整跑通一条运营工作链路：", styles["CNBody"]))
+story.append(Paragraph("本项目以公开真实咖啡销售数据为业务场景，围绕岗位 JD 中强调的 SQL/Python 数据分析能力、AI 工具使用意愿，以及 LangChain/Dify 等 Agent 框架认知，设计并完整跑通一条运营工作链路：", styles["CNBody"]))
 story.append(Spacer(1, 0.15*cm))
 for t in [
-    "数据生成：模拟 800 名用户、7,000+ 订单、600 条评论；",
+    f"数据来源：公开咖啡销售数据集（{TOTAL_ORDERS:,} 订单）+ 公开星巴克评论数据集（{len(REVIEWS)} 条评论）；",
     "用户分层：使用 SQL 与 Python 完成 RFM 模型，识别 6 类用户；",
     "AI 内容生成：基于人群与渠道批量生成营销文案；",
     "用户洞察：自动完成评论情感与业务问题分类；",
@@ -101,7 +101,7 @@ story.append(Paragraph("目标是通过一个可运行、可展示的 Demo，证
 story.append(Paragraph("二、业务场景与数据说明", styles["CNH1"]))
 story.append(HRFlowable(width="100%", thickness=0.7, color=colors.HexColor("#BFDBFE"), spaceAfter=6))
 story.append(Paragraph("业务场景", styles["CNH2"]))
-story.append(Paragraph("模拟某连锁咖啡品牌的 O2O/B2C 运营：用户通过小程序、APP、门店、美团、饿了么等渠道下单，涉及咖啡、烘焙、轻食、周边等品类。运营目标是提升用户活跃、复购与 GMV，同时降低内容生产和日报整理的人工成本。", styles["CNBody"]))
+story.append(Paragraph("业务场景来自一份公开咖啡店销售记录，包含交易时间、支付方式、匿名卡号、消费金额和饮品名称；评论数据来自公开星巴克用户评论。运营目标是提升用户活跃、复购与 GMV，同时降低内容生产和日报整理的人工成本。", styles["CNBody"]))
 story.append(Spacer(1, 0.15*cm))
 story.append(Paragraph("数据规模", styles["CNH2"]))
 data_table = [
@@ -206,7 +206,7 @@ story.append(Paragraph("关键能力点：Prompt 模板设计、多渠道适配�
 # 6. 方法三：评论洞察
 story.append(Paragraph("六、用户评论洞察", styles["CNH1"]))
 story.append(HRFlowable(width="100%", thickness=0.7, color=colors.HexColor("#BFDBFE"), spaceAfter=6))
-story.append(Paragraph("对 600 条评论进行情感分类和业务问题归类。配置大模型时调用 LLM 分类；未配置时使用关键词规则回退。", styles["CNBody"]))
+story.append(Paragraph("对真实评论数据进行情感分类和业务问题归类。配置大模型时调用 LLM 分类；未配置时使用关键词规则回退。", styles["CNBody"]))
 story.append(Spacer(1, 0.15*cm))
 insight_summary = INSIGHTS.groupby(["sentiment", "category"]).size().reset_index(name="数量").sort_values("数量", ascending=False).head(10)
 ins_rows = [["情感", "业务问题", "数量"]]
@@ -276,7 +276,7 @@ story.append(Paragraph("技术栈：Python · pandas · SQL · OpenAI API · Pro
 story.append(Spacer(1, 0.15*cm))
 story.append(Paragraph("可复现步骤", styles["CNH2"]))
 for t in [
-    "1. 运行 scripts/generate_data.py 生成模拟数据；",
+    "1. 运行 scripts/load_real_data.py 导入 data/real 下的真实数据；",
     "2. 运行 scripts/rfm_analysis.py 完成用户分层；",
     "3. 运行 scripts/ai_copy_generator.py 生成分人群文案；",
     "4. 运行 scripts/review_insights.py 完成评论洞察；",

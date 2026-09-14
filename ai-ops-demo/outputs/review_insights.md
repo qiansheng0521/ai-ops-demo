@@ -1,19 +1,21 @@
 # 用户评论洞察报告
 
 sentiment category  数量
- positive       口味 161
- positive       价格 148
- positive       配送  85
- negative       配送  33
-  neutral       口味  27
-  neutral       价格  26
-  neutral       配送  25
- positive       其他  22
- negative       口味  19
-  neutral       其他  17
- negative       价格  16
- negative       服务  16
-  neutral       服务   5
+ negative       口味 386
+ positive       口味  97
+ negative       价格  56
+ negative       服务  45
+ negative       其他  35
+ negative       配送  28
+  neutral       口味  24
+ positive       服务  13
+ positive       配送   5
+ positive       其他   4
+  neutral       价格   4
+ positive       价格   3
+  neutral       配送   2
+  neutral       服务   2
+  neutral       其他   1
 
 ## 建议行动
 

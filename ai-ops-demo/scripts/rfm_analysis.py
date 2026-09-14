@@ -6,7 +6,7 @@ RFM 用户分层分析
 """
 import pandas as pd
 
-ANALYSIS_DATE = pd.Timestamp("2026-06-30")
+# 分析基准日改为从真实数据动态计算
 
 
 def segment_label(row):
@@ -27,6 +27,7 @@ def segment_label(row):
 def main():
     orders = pd.read_csv("data/orders.csv", encoding="utf-8-sig", parse_dates=["order_date"])
     users = pd.read_csv("data/users.csv", encoding="utf-8-sig")
+    ANALYSIS_DATE = orders["order_date"].max()
 
     rfm = orders.groupby("user_id").agg(
         last_order=("order_date", "max"),

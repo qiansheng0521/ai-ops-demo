@@ -60,7 +60,8 @@ def main():
     segments = rfm["segment"].unique()
 
     rows = []
-    products = ["生椰拿铁", "冷萃咖啡", "烘焙早餐"]
+    orders = pd.read_csv("data/orders.csv", encoding="utf-8-sig")
+    products = orders["product"].value_counts().head(3).index.tolist() or ["拿铁", "美式", "茶饮"]
     for segment in segments:
         for channel in CHANNELS:
             product = products[hash(segment) % len(products)]

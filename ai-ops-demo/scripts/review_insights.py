@@ -13,10 +13,10 @@ except Exception:
     OpenAI = None
 
 CATEGORY_KEYWORDS = {
-    "口味": ["味道", "好喝", "苦", "香", "惊艳"],
-    "价格": ["价格", "贵", "划算", "优惠券", "9.9"],
-    "配送": ["配送", "慢", "凉", "快", "包装", "漏"],
-    "服务": ["服务", "客服", "排队", "态度"],
+    "口味": ["味道", "好喝", "苦", "香", "惊艳", "taste", "flavor", "bitter", "sweet", "delicious", "drink", "coffee", "order"],
+    "价格": ["价格", "贵", "划算", "优惠券", "9.9", "price", "expensive", "cheap", "free", "paid", "card"],
+    "配送": ["配送", "慢", "凉", "快", "包装", "漏", "drive-thru", "drive thru", "wait", "slow", "fast", "line"],
+    "服务": ["服务", "客服", "排队", "态度", "service", "staff", "employee", "barista", "friendly", "helpful", "rude", "manager"],
 }
 
 
@@ -47,8 +47,9 @@ def classify_by_llm(text):
 def classify_by_rules(text, rating):
     sentiment = "positive" if rating >= 4 else ("negative" if rating <= 2 else "neutral")
     category = "其他"
+    text_lower = str(text).lower()
     for cat, words in CATEGORY_KEYWORDS.items():
-        if any(w in text for w in words):
+        if any(str(w).lower() in text_lower for w in words):
             category = cat
             break
     return {"sentiment": sentiment, "category": category}
