@@ -1,0 +1,5 @@
+pandas>=2.0
+openai>=1.30
+# 可选：接入 LangChain
+# langchain>=0.3
+# langchain-openai>=0.2
